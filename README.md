@@ -11,17 +11,13 @@ Here’s how you can get the app running locally:
 1. **Clone the repo**:
 
    ```bash
-   git clone https://github.com/better-auth/better-auth
-   cd better-auth/demo/nextjs
+   git clone git@github.com:thormengkheang/nextjs-better-auth-organization.git
+   cd nextjs-better-auth-organization
    ```
 
 2. **Install the dependencies**:
 
    ```bash
-   npm install
-   # or
-   yarn install
-   # or
    pnpm install
    ```
 
@@ -40,13 +36,7 @@ Here’s how you can get the app running locally:
 Once everything is set up, start the development server with:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
 pnpm dev
-# or
-bun dev
 ```
 
 The app will be live at [http://localhost:3000](http://localhost:3000). Open it in your browser, and you’re good to go!
