@@ -31,6 +31,12 @@ Here’s how you can get the app running locally:
 
    - Open `.env` and fill in the required details. These will include things like API URLs, client IDs, and secrets needed to connect to the Better Auth service.
 
+3. **Run Database migration**:
+
+     ```bash
+     pnpm db:migrate
+     ```
+
 ### Start the Development Server
 
 Once everything is set up, start the development server with:
