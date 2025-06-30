@@ -1,10 +1,10 @@
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
-import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import { WrapperWithQuery } from "@/components/wrapper";
 import { createMetadata } from "@/lib/metadata";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata = createMetadata({
   title: {
@@ -25,7 +25,8 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/favicon/favicon.ico" sizes="any" />
       </head>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans`}>
+      <body className={`${GeistSans.className} font-sans`}>
+        <NextTopLoader color="#000" showSpinner={false} />
         <ThemeProvider attribute="class" defaultTheme="dark">
           <WrapperWithQuery>{children}</WrapperWithQuery>
           <Toaster richColors closeButton />
