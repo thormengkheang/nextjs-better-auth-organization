@@ -15,11 +15,66 @@ import { nextCookies } from "better-auth/next-js";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "@/db";
 import * as schema from "@/db/schema";
+import { createClient } from "redis";
+import type { RedisClientType } from "redis";
+
+interface SecondaryStorage {
+  get: (key: string) => Promise<string | null>;
+  set: (key: string, value: string, ttl?: number) => Promise<void>;
+  delete: (key: string) => Promise<void>;
+}
 
 const from = process.env.BETTER_AUTH_EMAIL || "delivered@resend.dev";
 const to = process.env.TEST_EMAIL || "";
 
+let redis: RedisClientType | undefined;
+let secondaryStorage: SecondaryStorage | undefined;
+
+const isRedisConfigured =
+  !!process.env.REDIS_HOST &&
+  !!process.env.REDIS_PORT &&
+  !!process.env.REDIS_PASSWORD;
+
+if (isRedisConfigured) {
+  try {
+    redis = isRedisConfigured
+      ? createClient({
+          socket: {
+            host: process.env.REDIS_HOST,
+            port: Number(process.env.REDIS_PORT),
+          },
+          password: process.env.REDIS_PASSWORD,
+        })
+      : createClient();
+
+    await redis.connect();
+    console.log("✅ Redis connected");
+
+    secondaryStorage = {
+      get: async (key) => {
+        const value = await redis!.get(key);
+        return value ?? null;
+      },
+      set: async (key, value, ttl) => {
+        if (ttl) await redis!.set(key, value, { EX: ttl });
+        else await redis!.set(key, value);
+      },
+      delete: async (key) => {
+        await redis!.del(key);
+      },
+    };
+  } catch (err) {
+    console.warn("⚠️ Redis connection failed — continuing without Redis:", err);
+  }
+}
+
 export const auth = betterAuth({
+  // store rate limit count on secondary storage
+  rateLimit: {
+    storage: "secondary-storage",
+    window: 10,
+    max: 100,
+  },
   appName: "Better Auth Organization Demo",
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -28,6 +83,8 @@ export const auth = betterAuth({
       user: schema.user,
     },
   }),
+  // use redis for temporary session cache
+  ...(secondaryStorage && { secondaryStorage }),
   emailVerification: {
     async sendVerificationEmail({ user, url }) {
       const res = await resend.emails.send({
@@ -106,4 +163,12 @@ export const auth = betterAuth({
     }),
   ],
   trustedOrigins: ["https://localhost:3000"],
+  session: {
+    storeSessionInDatabase: true,
+    preserveSessionInDatabase: false,
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
+    },
+  },
 });
