@@ -37,7 +37,13 @@ const InputOTPGroup = ({
 );
 InputOTPGroup.displayName = "InputOTPGroup";
 
-const InputOTPSlot = ({ ref, index, className, ...props }) => {
+interface InputOTPSlotProps extends React.ComponentProps<"div"> {
+  ref?: React.Ref<HTMLDivElement>;
+  index: number;
+  className?: string;
+}
+
+const InputOTPSlot = ({ ref, index, className, ...props }: InputOTPSlotProps) => {
 	const inputOTPContext = React.useContext(OTPInputContext);
 	const { char, hasFakeCaret, isActive } = inputOTPContext.slots[index];
 

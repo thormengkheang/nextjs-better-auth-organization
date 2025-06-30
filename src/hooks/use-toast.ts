@@ -147,7 +147,6 @@ function toast({ ...props }: Toast) {
       ...props,
       id,
       open: true,
-      // @ts-expect-error type error
       onOpenChange: (open) => {
         if (!open) dismiss();
       },

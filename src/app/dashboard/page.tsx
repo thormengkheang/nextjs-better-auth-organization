@@ -1,44 +1,52 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import UserCard from "./user-card";
-import { OrganizationCard } from "./organization-card";
-import AccountSwitcher from "@/components/account-switch";
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-export default async function DashboardPage() {
-  const [session, activeSessions, deviceSessions, organization] =
-    await Promise.all([
-      auth.api.getSession({
-        headers: await headers(),
-      }),
-      auth.api.listSessions({
-        headers: await headers(),
-      }),
-      auth.api.listDeviceSessions({
-        headers: await headers(),
-      }),
-      auth.api.getFullOrganization({
-        headers: await headers(),
-      }),
-    ]).catch((e) => {
-      console.log(e);
-      throw redirect("/sign-in");
-    });
+export default function Page() {
   return (
-    <div className="w-full">
-      <div className="flex gap-4 flex-col">
-        <AccountSwitcher
-          sessions={JSON.parse(JSON.stringify(deviceSessions))}
-        />
-        <UserCard
-          session={JSON.parse(JSON.stringify(session))}
-          activeSessions={JSON.parse(JSON.stringify(activeSessions))}
-        />
-        <OrganizationCard
-          session={JSON.parse(JSON.stringify(session))}
-          activeOrganization={JSON.parse(JSON.stringify(organization))}
-        />
-      </div>
-    </div>
-  );
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="#">
+                    Building Your Application
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div className="aspect-video rounded-xl bg-muted/50" />
+            <div className="aspect-video rounded-xl bg-muted/50" />
+            <div className="aspect-video rounded-xl bg-muted/50" />
+          </div>
+          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  )
 }
