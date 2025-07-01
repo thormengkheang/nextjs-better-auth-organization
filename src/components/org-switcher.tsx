@@ -1,7 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
+import {
+  AudioWaveform,
+  ChevronsUpDown,
+  Command,
+  GalleryVerticalEnd,
+  Plus,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -19,18 +25,35 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-interface Team {
-  name: string;
-  logo: React.ComponentType<{ className?: string }>;
-  plan: string;
-}
+// interface Team {
+//   name: string;
+//   logo: React.ComponentType<{ className?: string }>;
+//   plan: string;
+// }
 
-interface TeamSwitcherProps {
-  teams: Team[];
-}
+// interface TeamSwitcherProps {
+//   teams: Team[];
+// }
 
-export function TeamSwitcher(props: TeamSwitcherProps) {
-  const { teams } = props;
+const teams = [
+  {
+    name: "Acme Inc",
+    logo: GalleryVerticalEnd,
+    plan: "Enterprise",
+  },
+  {
+    name: "Acme Corp.",
+    logo: AudioWaveform,
+    plan: "Startup",
+  },
+  {
+    name: "Evil Corp.",
+    logo: Command,
+    plan: "Free",
+  },
+];
+
+export function OrgSwitcher() {
   const { isMobile } = useSidebar();
   const [activeTeam, setActiveTeam] = React.useState(teams[0]);
 

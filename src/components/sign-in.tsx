@@ -16,8 +16,10 @@ import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { signIn } from "@/lib/auth-client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -83,6 +85,7 @@ export default function SignIn() {
               setLoading(true);
               await signIn.email({ email, password });
               setLoading(false);
+              router.push("/dashboard");
             }}
           >
             {loading ? <Loader2 size={16} className="animate-spin" /> : "Login"}
