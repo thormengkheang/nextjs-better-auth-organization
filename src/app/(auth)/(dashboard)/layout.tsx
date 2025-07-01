@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { PropsWithChildren } from "react";
 
-export default function DashbarodLayout({ children }: PropsWithChildren) {
+export default function DashboardLayout({ children }: PropsWithChildren) {
   return (
     <SidebarProvider>
       <AppSidebar />
