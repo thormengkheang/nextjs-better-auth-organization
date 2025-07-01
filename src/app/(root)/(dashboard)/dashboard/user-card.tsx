@@ -25,10 +25,8 @@ import { Label } from "@/components/ui/label";
 import { PasswordInput } from "@/components/ui/password-input";
 import { client, signOut, useSession } from "@/lib/auth-client";
 import { Session } from "@/lib/auth-types";
-import { MobileIcon } from "@radix-ui/react-icons";
 import {
   Edit,
-  Laptop,
   Loader2,
   LogOut,
   QrCode,
@@ -41,18 +39,17 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-import { UAParser } from "ua-parser-js";
 import QRCode from "react-qr-code";
 import CopyButton from "@/components/ui/copy-button";
 
-export default function UserCard(props: {
+interface UserCardProps {
   session: Session | null;
-  activeSessions: Session["session"][];
-}) {
+}
+
+export default function UserCard(props: UserCardProps) {
   const router = useRouter();
   const { data } = useSession();
   const session = data || props.session;
-  const [isTerminating, setIsTerminating] = useState<string>();
   const [isPendingTwoFa, setIsPendingTwoFa] = useState<boolean>(false);
   const [twoFaPassword, setTwoFaPassword] = useState<string>("");
   const [twoFactorDialog, setTwoFactorDialog] = useState<boolean>(false);
@@ -60,9 +57,6 @@ export default function UserCard(props: {
   const [isSignOut, setIsSignOut] = useState<boolean>(false);
   const [emailVerificationPending, setEmailVerificationPending] =
     useState<boolean>(false);
-  const [activeSessions, setActiveSessions] = useState(props.activeSessions);
-  const removeActiveSession = (id: string) =>
-    setActiveSessions(activeSessions.filter((session) => session.id !== id));
 
   return (
     <Card>
@@ -135,55 +129,6 @@ export default function UserCard(props: {
             </AlertDescription>
           </Alert>
         )}
-
-        <div className="border-l-2 px-2 w-max gap-1 flex flex-col">
-          <p className="text-xs font-medium ">Active Sessions</p>
-          {activeSessions
-            .filter((session) => session.userAgent)
-            .map((session) => {
-              return (
-                <div key={session.id}>
-                  <div className="flex items-center gap-2 text-sm  text-black font-medium dark:text-white">
-                    {new UAParser(session.userAgent || "").getDevice().type ===
-                    "mobile" ? (
-                      <MobileIcon />
-                    ) : (
-                      <Laptop size={16} />
-                    )}
-                    {new UAParser(session.userAgent || "").getOS().name},{" "}
-                    {new UAParser(session.userAgent || "").getBrowser().name}
-                    <button
-                      className="text-red-500 opacity-80  cursor-pointer text-xs border-muted-foreground border-red-600  underline "
-                      onClick={async () => {
-                        setIsTerminating(session.id);
-                        const res = await client.revokeSession({
-                          token: session.token,
-                        });
-
-                        if (res.error) {
-                          toast.error(res.error.message);
-                        } else {
-                          toast.success("Session terminated successfully");
-                          removeActiveSession(session.id);
-                        }
-                        if (session.id === props.session?.session.id)
-                          router.refresh();
-                        setIsTerminating(undefined);
-                      }}
-                    >
-                      {isTerminating === session.id ? (
-                        <Loader2 size={15} className="animate-spin" />
-                      ) : session.id === props.session?.session.id ? (
-                        "Sign Out"
-                      ) : (
-                        "Terminate"
-                      )}
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
         <div className="border-y py-4 flex items-center flex-wrap justify-between gap-2">
           <div className="flex flex-col gap-2">
             <p className="text-sm">Two Factor</p>

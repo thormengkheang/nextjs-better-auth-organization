@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import {
   bearer,
   admin,
-  multiSession,
   organization,
   twoFactor,
   openAPI,
@@ -149,7 +148,6 @@ export const auth = betterAuth({
     admin({
       adminUserIds: ["EXD5zjob2SD6CBWcEQ6OpLRHcyoUbnaB"],
     }),
-    multiSession(),
     nextCookies(),
   ],
   trustedOrigins: ["https://localhost:3000"],
