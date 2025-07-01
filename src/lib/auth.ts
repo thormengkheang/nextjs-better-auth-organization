@@ -6,7 +6,6 @@ import {
   organization,
   twoFactor,
   openAPI,
-  customSession,
 } from "better-auth/plugins";
 import { reactInvitationEmail } from "./email/invitation";
 import { reactResetPasswordEmail } from "./email/reset-password";
@@ -152,15 +151,6 @@ export const auth = betterAuth({
     }),
     multiSession(),
     nextCookies(),
-    customSession(async (session) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          dd: "test",
-        },
-      };
-    }),
   ],
   trustedOrigins: ["https://localhost:3000"],
   session: {
