@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/sidebar";
 import { signOut } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { ThemeToggle } from "./theme-toggle";
 
 interface NavUserProps {
   user?: {
@@ -87,6 +88,9 @@ export function NavUser(props: NavUserProps) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <ThemeToggle />
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={handleOnLogoutClick}>
               <LogOut />
               Log out
