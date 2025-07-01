@@ -13,11 +13,16 @@ import { NavProjects } from "@/components/nav-projects";
 import { OrgSwitcher } from "@/components/org-switcher";
 
 export async function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const [session, org] = await Promise.all([
+    auth.api.getSession({ headers: await headers() }),
+    auth.api.getFullOrganization({
+      headers: await headers(),
+    }),
+  ]);
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <OrgSwitcher />
+        <OrgSwitcher session={session} activeOrg={org} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
